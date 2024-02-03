@@ -59,23 +59,3 @@ app.patch('/app/patch/:id',(req,res)=>{
 app.listen(5000,()=>{
     console.log("Server Running !")
 })
-
-// app.get('/list',(req,res)=>{
-//    return res.json(user)
-// })
-
-// app.post('/add/:id',(req,res)=>{
-//     const body = req.body
-//     user.push(body)
-//     fs.writeFile("./UserData.json",JSON.stringify(user),(err)=>{
-//         if(err){
-//           console.log(err)
-//         }
-//     })
-//     fs.writeFile('./new.json',JSON.stringify())
-//     return res.send("sent successfully")
-// })
-
-// app.listen(8000,()=>{
-//     console.log("Server Started !")
-// })
