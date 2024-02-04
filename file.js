@@ -4,57 +4,96 @@ let users = require('./User_Data.json')
 const mongoose = require('mongoose')
 const app = express()
 
+mongoose.connect("mongodb://127.0.0.1:27017/Node_DB").then(()=> console.log("Connected")).catch((e)=>console.log(e))
+const schema = new mongoose.Schema({
+    first_name:{
+        type:String,
+        required:true
+    },
+    last_name:{
+        type:String,
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    gender:{
+        type:String,
+        required:true
+    },
+    ip_address:{
+        type:String,
+        required:true
+    }
+
+})
+
+const User = new mongoose.model("user",schema)
 
 app.use(express.urlencoded({extended:false}))
 
-app.get('/app/list',(req,res)=>{
-    return res.json(users)
+app.get('/app/list',async(req,res)=>{
+    const all_users = await User.find({})
+    return res.json(all_users)
 })
 
-app.get('/html/list',(req,res)=>{
+app.get('/html/list',async(req,res)=>{
+    const all_users = await User.find({})
     const html = `
     <ul>
-    ${users.map((user)=>`<li>${user.first_name} ID:${user.id}</li>`).join(" ")}
+    ${all_users.map((user)=>`<li>${user.first_name} ID:${user._id}</li>`).join(" ")}
     </ul>
     `
     return res.send(html)
 })
 
-app.get('/app/list/:id',(req,res)=>{
-    let id = Number(req.params.id)
-    const result = users.find((user)=>user.id===id)
-    if(!result){
+app.get('/app/list/:id',async(req,res)=>{
+    const req_user = await User.findById(req.params.id)
+    if(!req_user){
         res.json({"message" : "Please send a valid input"})
     }
     else{
-    res.json(result)
+    res.json(req_user)
     }
 })
 
-app.post('/app/add',(req,res)=>{
+app.post('/app/add',async(req,res)=>{
     const body = req.body
-    users.push({...body,id:users.length+1})
-    fs.writeFile('./User_Data.json',JSON.stringify(users),(err,data)=>{
-        return res.json({"Message":"Success"})
+    if(!body.first_name ||
+        !body.last_name ||
+        !body.email ||
+        !body.gender ||
+        !body.ip_address
+        ){
+            res.status(400).json({msg:"All fields are required"})
+        }
+    const result= await User.create({
+        first_name:req.body.first_name,
+        last_name:req.body.last_name,
+        email:req.body.email,
+        gender:req.body.gender,
+        ip_address:req.body.ip_address
     })
+    console.log(result)
+    return res.status(201).json({msg:"Created"})
 })
 
-app.delete('/app/delete/:id',(req,res)=>{
-    const id = Number(req.params.id)
-    const updatedusers = users.filter((user)=>user.id!==id)
-    fs.writeFile('./User_Data.json',JSON.stringify(updatedusers),(err,data)=>{
-        res.send("User Deleted")
-    })
+app.delete('/app/delete/:id',async(req,res)=>{
+    await User.findByIdAndDelete(req.params.id)
+    res.status(200).json({msg:"Selected User Deleted"})
 })
 
-app.patch('/app/patch/:id',(req,res)=>{
-    const id_req = Number(req.params.id)
+app.patch('/app/patch/:id',async(req,res)=>{
     const body = req.body
-    users = users.filter((i)=>i.id!==id_req)
-    users.push({...body,id:id_req})
-    fs.writeFile('User_Data.json',JSON.stringify(users),(err,data)=>{
-        res.send("User Updated Successfully !")
+    await User.findByIdAndUpdate(req.params.id,{
+        first_name:req.body.first_name,
+        last_name:req.body.last_name,
+        email:req.body.email,
+        gender:req.body.gender,
+        ip_address:req.body.ip_address
     })
+    res.status(201).json({msg:"Updated the Required User"})
 })
 app.listen(5000,()=>{
     console.log("Server Running !")
