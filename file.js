@@ -1,6 +1,4 @@
-const fs = require("fs")
 const express = require("express")
-let users = require('./User_Data.json')
 const mongoose = require('mongoose')
 const app = express()
 
