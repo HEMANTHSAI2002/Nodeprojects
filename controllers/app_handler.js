@@ -3,7 +3,7 @@ const {User} = require('../models/app_schema')
 
 async function handlerGetList(req,res){
     const all_users = await User.find({})
-    return res.json(all_users)
+    return res.status(200).json(all_users)
 }
 
 async function handlerGetHtmlList (req,res){
@@ -13,16 +13,16 @@ async function handlerGetHtmlList (req,res){
     ${all_users.map((user)=>`<li>${user.first_name} ID:${user._id}</li>`).join(" ")}
     </ul>
     `
-    return res.send(html)
+    return res.status(200).send(html)
 }
 
 async function handlerGetUserByID(req,res){
     const req_user = await User.findById(req.params.id)
     if(!req_user){
-        res.json({"message" : "Please send a valid input"})
+        res.status(200).json({"message" : "Please send a valid input"})
     }
     else{
-        res.json(req_user)
+        res.status(400).json(req_user)
     }
 }
 
