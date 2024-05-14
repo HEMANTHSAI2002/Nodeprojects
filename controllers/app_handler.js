@@ -28,15 +28,6 @@ async function handlerGetUserByID(req,res){
 
 async function handlerPostAddUser(req,res){
     const body = req.body
-    console.log(body)
-    if(!body.first_name ||
-        !body.last_name ||
-        !body.email ||
-        !body.gender ||
-        !body.ip_address
-    ){
-        res.status(400).json({msg:"All fields are required"})
-    }
     const result= await User.create({
         first_name:req.body.first_name,
         last_name:req.body.last_name,

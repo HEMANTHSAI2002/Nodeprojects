@@ -1,26 +1,20 @@
 const express = require('express')
 
 const router = express.Router()
-const {
-    handlerGetList,
-    handlerGetHtmlList,
-    handlerGetUserByID,
-    handlerPostAddUser,
-    handlerPatchUser,
-    handlerDeleteUser,
-} = require('../controllers/app_handler')
+const middleware = require('../middlewares/paramvalidation')
+const handler = require('../controllers/app_handler')
 
-router.get('/list',handlerGetList)
+router.get('/list',handler.handlerGetList)
 
-router.get('/html/list',handlerGetHtmlList)
+router.get('/html/list',handler.handlerGetHtmlList)
 
-router.get('/list/:id',handlerGetUserByID)
+router.get('/list/:id',handler.handlerGetUserByID)
 
-router.post('/add',handlerPostAddUser)
+router.post('/add',middleware.middlewareAddUser,handler.handlerPostAddUser)
 
-router.patch('/patch/:id',handlerPatchUser)
+router.patch('/patch/:id',handler.handlerPatchUser)
 
-router.delete('/delete/:id',handlerDeleteUser)
+router.delete('/delete/:id',handler.handlerDeleteUser)
 
 
 module.exports = router
