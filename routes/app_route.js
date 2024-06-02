@@ -4,7 +4,7 @@ const router = express.Router()
 const middleware = require('../middlewares/paramvalidation')
 const handler = require('../controllers/app_handler')
 
-router.get('/list',handler.handlerGetList)
+router.get('/list',middleware.middlewareBearertokenVerify,handler.handlerGetList)
 
 router.get('/html/list',handler.handlerGetHtmlList)
 
