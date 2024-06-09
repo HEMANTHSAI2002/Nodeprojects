@@ -23,7 +23,6 @@ async function handlerBearerTokenGen(req,res){
     }
     const result = await bcrypt.compare(body.Password,unique_user.Password)
     const token = await jwt.sign(unique_user.Password,process.env.Bearertoken_secret)
-    console.log(result)
     res.status(200).json({"msg":token})
 }
 
